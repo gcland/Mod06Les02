@@ -20,7 +20,7 @@ members_schema = MemberSchema(many=True)
 def get_db_connection():
     db_name = "Fitness_Center_db"
     user = "root"
-    password = "XXXXXXXX" #PLEASE ENTER USER PASSWORD
+    password = "XXXXXXX" #PLEASE ENTER USER PASSWORD
     host = "localhost"
 
     try:
@@ -129,7 +129,7 @@ def update_member(id):
             conn.close()
 
 @app.route("/members/<int:id>", methods=["DELETE"])
-def delete_customer(id):
+def delete_member(id):
    
     try:
         conn = get_db_connection()

@@ -10,7 +10,7 @@ ma = Marshmallow(app)
 def get_db_connection():
     db_name = "Fitness_Center_db"
     user = "root"
-    password = "XXXXXXXXX" #PLEASE ENTER USER PASSWORD
+    password = "XXXXXXX" #PLEASE ENTER USER PASSWORD
     host = "localhost"
 
     try:
@@ -29,14 +29,13 @@ def get_db_connection():
 
 
 class WorkoutSchema(ma.Schema):
-    session_id = fields.String(required=True)
     member_id = fields.String(required=True)
     session_date = fields.String(required=True)
     session_time = fields.String(required=True)
     activity = fields.String(required=True)
 
     class Meta:
-        fields = ( 'member_id', "session_date", "session_time", "activity", "session_id")
+        fields = ('member_id', "session_date", "session_time", "activity", "session_id")
 
 workout_schema = WorkoutSchema()
 workouts_schema = WorkoutSchema(many=True)
@@ -100,8 +99,8 @@ def add_workout():
             cursor.close()
             conn.close()
 
-@app.route("/workoutsessions/<int:id>", methods=["PUT"])
-def update_workout(id):
+@app.route("/workoutsessions/<int:session_id>", methods=["PUT"])
+def update_workout(session_id):
     try:
         workout_data = workout_schema.load(request.json)
     except ValidationError as e:
@@ -113,7 +112,7 @@ def update_workout(id):
             return jsonify({'Error': "Database connection failed"}), 500
         cursor = conn.cursor()
 
-        updated_workout = (workout_data['member_id'], workout_data['session_date'], workout_data['session_time'], workout_data['activity'], id)
+        updated_workout = (workout_data['member_id'], workout_data['session_date'], workout_data['session_time'], workout_data['activity'], session_id)
                                     
         query = 'UPDATE WorkoutSessions SET member_id = %s, session_date = %s, session_time = %s, activity = %s WHERE session_id = %s'
 
@@ -131,14 +130,14 @@ def update_workout(id):
             cursor.close()
             conn.close()
 
-@app.route("/workoutsessions/<int:id>", methods=["GET"])
-def get_workouts_member(id):
+@app.route("/workoutsessions/<int:member_id>", methods=["GET"])
+def get_workouts_member(member_id):
     try:
         conn = get_db_connection()
         if conn is None:
             return jsonify({'Error': "Database connection failed"}), 500
         cursor = conn.cursor(dictionary=True)
-        view_workouts_member = (id,)
+        view_workouts_member = (member_id,)
         query = "SELECT * FROM WorkoutSessions WHERE member_id = %s"
 
         cursor.execute(query, view_workouts_member)
